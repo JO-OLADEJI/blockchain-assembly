@@ -1,106 +1,62 @@
-// #define function updateHorseNumber(uint256) nonpayable returns()
-// #define function readNumberOfHorses() view returns(uint256)
+#define function updateHorseNumber(uint256) nonpayable returns()
+#define function readNumberOfHorses() view returns(uint256)
 
-// #define constant SLOT_HORSE_NUMBER = FREE_STORAGE_POINTER()
-
-// #define macro MAIN() = takes(0) returns (0) {
-//     0x00
-//     calldataload
-//     0xe0                            // ----------------- STACK ------------------
-//     shr                             // [0x<selector>]
-
-//     dup1                            // [0x<selector>, 0x<selector>]
-//     __FUNC_SIG(updateHorseNumber)   // [0x<selector>, 0x<selector>, 0xcdfead2e]
-//     eq                              // [0x<selector>, 0x00 or 0x01]
-//     updateHorseNumber               // [0x<selector>, 0x00 or 0x01, 0x<jumpdest-pc>]
-//     jumpi                           // [0x<selector>]
-
-//     __FUNC_SIG(readNumberOfHorses)  // [0x<selector>, 0xcdfead2e]
-//     eq                              // [0x00 or 0x01]
-//     readNumberOfHorses              // [0x00 or 0x01, 0x<jumpdest-pc>]
-//     jumpi                           // []
-
-//     updateHorseNumber: UPDATE_HORSE_NUMBER()
-
-//     readNumberOfHorses: GET_HORSE_NUMBER()
-// }
-
-// #define macro UPDATE_HORSE_NUMBER() = takes(0) returns (0) {
-//     0x04                            // ----------------- STACK ------------------
-//     calldataload                    // [0x<uint256 argument>]
-//     [SLOT_HORSE_NUMBER]             // [0x<uint256 argument>, 0x...0]
-//     sstore                          // []
-//     stop
-// }
-
-// #define macro GET_HORSE_NUMBER() = takes(0) returns (0) {
-//     [SLOT_HORSE_NUMBER]             // [0x...0]
-//     sload                           // [0x01]
-//     0x00                            // [0x01, 0x00]
-//     mstore                          // []
-//     0x20                            // [0x20]
-//     0x00                            // [0x20, 0x00]
-//     return                          // []
-// }
-
-
-// #define macro FEED_HORSE() = takes (0) returns (0) {
-//                                     // -------- STACK --------                  -------- MEMORY --------
-//     timestamp                       // timestamp]
-//     0x04                            // 0x04, timestamp]
-//     calldataload                    // horseId, timestamp]
-//     0x00                            // 0x00, horseId, timestamp]
-//     mstore                          // timestamp]                               { 0x00: horseId }
-//     0x0a                            // 0x0a, timestamp]
-//     0x20                            // 0x20, 0x0a, timestamp]
-//     mstore                          // timestamp]                               { 0x00: horseId, 0x20: horseIdToFedTimeStamp.slot }
-//     0x40                            // 0x40, timestamp]
-//     0x00                            // 0x00, 0x40, timestamp]
-//     keccak256                       // hash, timestamp]
-//     sstore
-//     stop
-// }
-
-
-// 0x70a08231 - balanceOf(address)
-#define function balanceOf(address) view returns(uint256)
+#define constant SLOT_HORSE_NUMBER = FREE_STORAGE_POINTER()
 
 #define macro MAIN() = takes(0) returns (0) {
     0x00
     calldataload
-    0xe0
-    shr
+    0xe0                            // ----------------- STACK ------------------
+    shr                             // [0x<selector>]
 
-    __FUNC_SIG(balanceOf)
-    eq
-    balanceOf
-    jumpi
+    dup1                            // [0x<selector>, 0x<selector>]
+    __FUNC_SIG(updateHorseNumber)   // [0x<selector>, 0x<selector>, 0xcdfead2e]
+    eq                              // [0x<selector>, 0x00 or 0x01]
+    updateHorseNumber               // [0x<selector>, 0x00 or 0x01, 0x<jumpdest-pc>]
+    jumpi                           // [0x<selector>]
 
-    0x00
-    dup1
-    revert
+    __FUNC_SIG(readNumberOfHorses)  // [0x<selector>, 0xcdfead2e]
+    eq                              // [0x00 or 0x01]
+    readNumberOfHorses              // [0x00 or 0x01, 0x<jumpdest-pc>]
+    jumpi                           // []
 
-    balanceOf: BALANCE_OF()
+    updateHorseNumber: UPDATE_HORSE_NUMBER()
+
+    readNumberOfHorses: GET_HORSE_NUMBER()
 }
 
-#define macro BALANCE_OF() = takes (0) returns (0) {
-                                    // -------- STACK --------                  -------- MEMORY --------
-    0x04                            // 0x04]
-    calldataload                    // address]
-    0x00                            // 0x00, address]
-    mstore                          // []                                       { 0x00: address }
-    0x03                            // 0x03]
-    0x20                            // 0x20, 0x03]
-    mstore                          // []                                       { 0x00: address, 0x20: balanceOf.slot }
+#define macro UPDATE_HORSE_NUMBER() = takes(0) returns (0) {
+    0x04                            // ----------------- STACK ------------------
+    calldataload                    // [0x<uint256 argument>]
+    [SLOT_HORSE_NUMBER]             // [0x<uint256 argument>, 0x...0]
+    sstore                          // []
+    stop
+}
 
-    0x40                            // 0x40]
-    0x00                            // 0x00, 0x40]
-    sha3                            // hash]
-
-    sload                           // balance]                       { 0x00: address, 0x20: balanceOf.slot, 0x40: hash }
-    0x40                            // 0x60, balance]                 { 0x00: address, 0x20: balanceOf.slot, 0x40: hash, 0x60: balance }
-    mstore                          // []                                { 0x00: address, 0x20: balanceOf.slot, 0x40: hash, 0x60: balance }
-    0x20                            // 0x20]
-    0x40                            // 0x40, 0x20]
+#define macro GET_HORSE_NUMBER() = takes(0) returns (0) {
+    [SLOT_HORSE_NUMBER]             // [0x...0]
+    sload                           // [0x01]
+    0x00                            // [0x01, 0x00]
+    mstore                          // []
+    0x20                            // [0x20]
+    0x00                            // [0x20, 0x00]
     return                          // []
+}
+
+
+#define macro FEED_HORSE() = takes (0) returns (0) {
+                                    // -------- STACK --------                  -------- MEMORY --------
+    timestamp                       // timestamp]
+    0x04                            // 0x04, timestamp]
+    calldataload                    // horseId, timestamp]
+    0x00                            // 0x00, horseId, timestamp]
+    mstore                          // timestamp]                               { 0x00: horseId }
+    0x0a                            // 0x0a, timestamp]
+    0x20                            // 0x20, 0x0a, timestamp]
+    mstore                          // timestamp]                               { 0x00: horseId, 0x20: horseIdToFedTimeStamp.slot }
+    0x40                            // 0x40, timestamp]
+    0x00                            // 0x00, 0x40, timestamp]
+    keccak256                       // hash, timestamp]
+    sstore
+    stop
 }
