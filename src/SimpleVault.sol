@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.20;
 
-error WithdrawError();
-error Unauthorized();
+contract SimpleSolVault {
+    error WithdrawError();
+    error Unauthorized();
 
-contract SimpleVault {
     address public owner;
-    mapping(address user => uint256 balance) public balances;
+    mapping(address => uint256) public balances;
 
     constructor() {
         owner = msg.sender;

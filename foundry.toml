@@ -4,4 +4,8 @@ out = "out"
 libs = ["lib"]
 runs = 1000
 
+[fuzz]
+runs = 1000
+seed = '0x01'
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
