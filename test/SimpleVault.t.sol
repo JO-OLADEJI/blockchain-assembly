@@ -3,18 +3,19 @@ pragma solidity 0.8.20;
 
 import {Test, console} from "forge-std/Test.sol";
 import {SimpleSolVault} from "../src/SimpleVault.sol";
+import {SimpleYulVault} from "../src/SimpleVault.yul.sol";
 import {MaliciousReceiver} from "./MaliciousReceiver.sol";
 
 contract SimpleVaultTest is Test {
     address deployer = makeAddr("deployer");
     address alice = makeAddr("alice");
 
-    SimpleSolVault public vault;
+    SimpleYulVault public vault;
     MaliciousReceiver maliciousReceiver;
 
     function setUp() public {
         vm.startPrank(deployer);
-        vault = new SimpleSolVault();
+        vault = new SimpleYulVault();
         maliciousReceiver = new MaliciousReceiver();
         vm.stopPrank();
     }
