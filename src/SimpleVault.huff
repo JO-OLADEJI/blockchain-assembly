@@ -1,0 +1,98 @@
+#define function deposit() payable
+#define function withdraw() nonpayable
+#define function balances(address) view returns(uint256)
+#define function owner() view returns (address)
+#define function revokeOwnership() nonpayable
+
+#define error WithdrawError()
+#define error Unauthorized()
+
+#define constant OWNER_SLOT = FREE_STORAGE_POINTER()
+#define constant BALANCES_SLOT = FREE_STORAGE_POINTER()
+
+#define macro MAIN() = takes(0) returns (0) {
+    // function dispather                       // ----------------- STACK ------------------
+    0x00                                        // 0x00]
+    calldataload                                // 0x<calldata>]
+    0xe0                                        // 0xe0 | 0x<calldata>]
+    shr                                         // 0x<func-selector>]
+
+    dup1                                        // 0x<func-selector> | 0x<func-selector>]
+    __FUNC_SIG(deposit)                         // deposit.selector | 0x<func-selector> | 0x<func-selector>]
+    eq                                          // deposit.selector == 0x<func-selector> | 0x<func-selector>]
+    deposit                                     // deposit-jumpdest | deposit.selector == 0x<func-selector> | 0x<func-selector>]
+    jumpi                                       // 0x<func-selector>]
+
+    dup1                                        // 0x<func-selector> | 0x<func-selector>]
+    __FUNC_SIG(withdraw)                        // withdraw.selector | 0x<func-selector> | 0x<func-selector>]
+    eq                                          // withdraw.selector == 0x<func-selector> | 0x<func-selector>]
+    withdraw                                    // withdraw-jumpdest | withdraw.selector == 0x<func-selector> | 0x<func-selector>]
+    jumpi                                       // 0x<func-selector>]
+
+    dup1                                        // 0x<func-selector> | 0x<func-selector>]
+    __FUNC_SIG(balances)                        // balances.selector | 0x<func-selector> | 0x<func-selector>]
+    eq                                          // balances.selector == 0x<func-selector> | 0x<func-selector>]
+    balances                                    // balances-jumpdest | balances.selector == 0x<func-selector> | 0x<func-selector>]
+    jumpi                                       // 0x<func-selector>]
+
+    dup1                                        // 0x<func-selector> | 0x<func-selector>]
+    __FUNC_SIG(owner)                           // balances.selector | 0x<func-selector> | 0x<func-selector>]
+    eq                                          // balances.selector == 0x<func-selector> | 0x<func-selector>]
+    owner                                       // balances-jumpdest | balances.selector == 0x<func-selector> | 0x<func-selector>]
+    jumpi                                       // 0x<func-selector>]
+
+    __FUNC_SIG(revokeOwnership)                 // revokeOwnership.selector | 0x<func-selector>]
+    eq                                          // revokeOwnership.selector == 0x<func-selector>]
+    revokeOwnership                             // revokeOwnership-jumpdest | revokeOwnership.selector == 0x<func-selector>]
+    jumpi                                       // []
+
+    // if msg.value != 0 => jump to `deposit`
+    callvalue                                   // msg.value]
+    0x00                                        // 0x00 | msg.value]
+    eq                                          // 0x00 == msg.value]
+    deposit                                     // deposit-jumpdest | 0x00 == msg.value]
+    jumpi                                       // []
+
+    0x00                                        // 0x00]
+    dup1                                        // 0x00 | 0x00]
+    revert                                      // []
+
+    deposit: DEPOSIT()
+
+    withdraw: WITHDRAW()
+
+    balances: BALANCES()
+
+    owner: OWNER()
+
+    revokeOwnership: REVOKE_OWNERSHIP()
+}
+
+#define macro DEPOSIT() = takes(0) returns (0) {
+    caller                                      // 0x<msg.sender>]
+    0x00                                        // 0x00 | 0x<msg.sender>]
+    mstore                                      // []
+
+    [BALANCES_SLOT]                             // balances.slot]
+    0x20                                        // 0x20 | balances.slot]
+    mstore                                      // []
+
+    0x40                                        // 0x40]
+    0x00                                        // 0x00 | 0x40]
+    sha3                                        // balances[msg.sender].slot]
+
+    dup1                                        // balances[msg.sender].slot | balances[msg.sender].slot]
+    sload                                       // balances[msg.sender] | balances[msg.sender].slot]
+    callvalue                                   // msg.value | balances[msg.sender] | balances[msg.sender].slot]
+    add                                         // msg.value + balances[msg.sender] | balances[msg.sender].slot]
+    swap1                                       // balances[msg.sender].slot | msg.value + balances[msg.sender]]
+    sstore                                      // []
+}
+
+#define macro WITHDRAW() = takes(0) returns (0) {}
+
+#define macro BALANCES() = takes(0) returns (0) {}
+
+#define macro OWNER() = takes(0) returns (0) {}
+
+#define macro REVOKE_OWNERSHIP() = takes(0) returns (0) {}
