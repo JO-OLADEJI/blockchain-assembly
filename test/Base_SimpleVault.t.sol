@@ -2,22 +2,25 @@
 pragma solidity 0.8.20;
 
 import {Test, console} from "forge-std/Test.sol";
-import {SimpleSolVault} from "../src/SimpleVault.sol";
-import {SimpleYulVault} from "../src/SimpleVault.yul.sol";
 import {MaliciousReceiver} from "./MaliciousReceiver.sol";
+import {ISimpleVault} from "../src/ISimpleVault.sol";
 
-contract SimpleVaultTest is Test {
+abstract contract Base_SimpleVaultTest is Test {
     address deployer = makeAddr("deployer");
     address alice = makeAddr("alice");
 
-    SimpleYulVault public vault;
+    ISimpleVault public vault;
     MaliciousReceiver maliciousReceiver;
 
-    function setUp() public {
+    function setUp() public virtual {
         vm.startPrank(deployer);
-        vault = new SimpleYulVault();
         maliciousReceiver = new MaliciousReceiver();
         vm.stopPrank();
+    }
+
+    function test_constructor() public view {
+        address owner = vault.owner();
+        assertEq(deployer, vault.owner());
     }
 
     function test_deposit() public {
@@ -136,7 +139,7 @@ contract SimpleVaultTest is Test {
         assertEq(vault.balances(address(maliciousReceiver)), amount);
 
         vm.expectRevert(
-            abi.encodeWithSelector(SimpleSolVault.WithdrawError.selector)
+            abi.encodeWithSelector(ISimpleVault.WithdrawError.selector)
         );
         vault.withdraw();
     }
@@ -156,7 +159,7 @@ contract SimpleVaultTest is Test {
         vm.startPrank(alice);
 
         vm.expectRevert(
-            abi.encodeWithSelector(SimpleSolVault.Unauthorized.selector)
+            abi.encodeWithSelector(ISimpleVault.Unauthorized.selector)
         );
         vault.revokeOwnership();
         vm.stopPrank();

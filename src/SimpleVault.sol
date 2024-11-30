@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.20;
 
-contract SimpleSolVault {
-    error WithdrawError();
-    error Unauthorized();
+import {ISimpleVault} from "./ISimpleVault.sol";
 
+contract SimpleVaultSolc is ISimpleVault {
     address public owner;
     mapping(address => uint256) public balances;
 

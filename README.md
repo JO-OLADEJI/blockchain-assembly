@@ -10,7 +10,7 @@ git clone https://github.com/JO-OLADEJI/blockchain-assembly.git
 forge build
 
 # run tests
-forge test
+forge test --evm-version shanghai
 
 # deploy contract(s)
 forge run script/deploy.sol --target <target-language>

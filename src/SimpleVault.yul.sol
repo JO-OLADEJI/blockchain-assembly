@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.20;
 
-contract SimpleYulVault {
+import {ISimpleVault} from "./ISimpleVault.sol";
+
+contract SimpleVaultYul is ISimpleVault {
     address public owner;
     mapping(address => uint256) public balances;
 

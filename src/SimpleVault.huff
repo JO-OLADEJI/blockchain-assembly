@@ -1,14 +1,66 @@
-#define function deposit() payable
-#define function withdraw() nonpayable
+#define function deposit() payable returns()
+#define function withdraw() nonpayable returns()
 #define function balances(address) view returns(uint256)
 #define function owner() view returns (address)
-#define function revokeOwnership() nonpayable
+#define function revokeOwnership() nonpayable returns()
 
 #define error WithdrawError()
 #define error Unauthorized()
 
-#define constant OWNER_SLOT = FREE_STORAGE_POINTER()
-#define constant BALANCES_SLOT = FREE_STORAGE_POINTER()
+#define constant OWNER_SLOT = 0x00
+#define constant BALANCES_SLOT = 0x01
+
+#define macro CONSTRUCTOR() = takes(0) returns (0) {
+    caller
+    [OWNER_SLOT]
+    sstore
+
+    0x64
+    dup1
+    0x0c
+    returndatasize
+    codecopy
+    returndatasize
+    return
+}
+
+#define macro DEPOSIT() = takes(0) returns (0) {
+    caller                                      // 0x<msg.sender>]
+    0x00                                        // 0x00 | 0x<msg.sender>]
+    mstore                                      // []
+
+    [BALANCES_SLOT]                             // balances.slot]
+    0x20                                        // 0x20 | balances.slot]
+    mstore                                      // []
+
+    0x40                                        // 0x40]
+    0x00                                        // 0x00 | 0x40]
+    sha3                                        // balances[msg.sender].slot]
+
+    dup1                                        // balances[msg.sender].slot | balances[msg.sender].slot]
+    sload                                       // balances[msg.sender] | balances[msg.sender].slot]
+    callvalue                                   // msg.value | balances[msg.sender] | balances[msg.sender].slot]
+    add                                         // msg.value + balances[msg.sender] | balances[msg.sender].slot]
+    swap1                                       // balances[msg.sender].slot | msg.value + balances[msg.sender]]
+    sstore                                      // []
+}
+
+#define macro WITHDRAW() = takes(0) returns (0) {}
+
+#define macro BALANCES() = takes(0) returns (0) {}
+
+#define macro OWNER() = takes(0) returns (0) {
+    [OWNER_SLOT]
+    sload
+    0x00
+    mstore
+
+    0x20
+    0x00
+    return
+}
+
+#define macro REVOKE_OWNERSHIP() = takes(0) returns (0) {}
 
 #define macro MAIN() = takes(0) returns (0) {
     // function dispather                       // ----------------- STACK ------------------
@@ -67,32 +119,3 @@
 
     revokeOwnership: REVOKE_OWNERSHIP()
 }
-
-#define macro DEPOSIT() = takes(0) returns (0) {
-    caller                                      // 0x<msg.sender>]
-    0x00                                        // 0x00 | 0x<msg.sender>]
-    mstore                                      // []
-
-    [BALANCES_SLOT]                             // balances.slot]
-    0x20                                        // 0x20 | balances.slot]
-    mstore                                      // []
-
-    0x40                                        // 0x40]
-    0x00                                        // 0x00 | 0x40]
-    sha3                                        // balances[msg.sender].slot]
-
-    dup1                                        // balances[msg.sender].slot | balances[msg.sender].slot]
-    sload                                       // balances[msg.sender] | balances[msg.sender].slot]
-    callvalue                                   // msg.value | balances[msg.sender] | balances[msg.sender].slot]
-    add                                         // msg.value + balances[msg.sender] | balances[msg.sender].slot]
-    swap1                                       // balances[msg.sender].slot | msg.value + balances[msg.sender]]
-    sstore                                      // []
-}
-
-#define macro WITHDRAW() = takes(0) returns (0) {}
-
-#define macro BALANCES() = takes(0) returns (0) {}
-
-#define macro OWNER() = takes(0) returns (0) {}
-
-#define macro REVOKE_OWNERSHIP() = takes(0) returns (0) {}
