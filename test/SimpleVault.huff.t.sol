@@ -4,7 +4,6 @@ pragma solidity 0.8.20;
 import {Base_SimpleVaultTest} from "./Base_SimpleVault.t.sol";
 import {ISimpleVault} from "../src/ISimpleVault.sol";
 import {HuffDeployer} from "foundry-huff/HuffDeployer.sol";
-import {HuffConfig} from "foundry-huff/HuffConfig.sol";
 
 contract SimpleVaultHuffTest is Base_SimpleVaultTest {
     function setUp() public override {

@@ -13,7 +13,8 @@ forge build
 forge test --evm-version shanghai
 
 # deploy contract(s)
-forge run script/deploy.sol --target <target-language>
+forge script script/deploy.sol:DeployScript <target-language> --sig "run(string)" -vvv
 
 # <target-language> can either be `huff`, `yul` or `solidity`
+# `huff` has a bug when broadcasting transactions. I'm working on making a PR to the foundry-huff repo.
 ```
