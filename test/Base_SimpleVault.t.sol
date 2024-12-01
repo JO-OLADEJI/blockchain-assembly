@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import {Test, console} from "forge-std/Test.sol";
-import {MaliciousReceiver} from "./MaliciousReceiver.sol";
+import {MaliciousReceiver} from "../src/MaliciousReceiver.sol";
 import {ISimpleVault} from "../src/ISimpleVault.sol";
 
 abstract contract Base_SimpleVaultTest is Test {
