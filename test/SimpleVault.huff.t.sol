@@ -6,7 +6,7 @@ import {ISimpleVault} from "../src/ISimpleVault.sol";
 import {HuffDeployer} from "foundry-huff/HuffDeployer.sol";
 import {HuffConfig} from "foundry-huff/HuffConfig.sol";
 
-contract SimpleVaultYulTest is Base_SimpleVaultTest {
+contract SimpleVaultHuffTest is Base_SimpleVaultTest {
     function setUp() public override {
         super.setUp();
         vault = ISimpleVault(
