@@ -2,6 +2,7 @@
 cache/
 out/
 target/
+test-ledger/
 
 # Ignores development broadcast logs
 !/broadcast
@@ -17,3 +18,4 @@ docs/
 #custom
 .zed/
 __TEMP__*
+playground.js
